@@ -118,11 +118,11 @@ class EditData(Resource):
 class Refcode(Resource):
     decorators = [auth_required]
     @api.doc(security='jwt')
-    def post(self):
+    def post(self, current):
         refcode = request.args.get('refcode')
         if refcode:
-            u = User.query.filter_by(refcode=refcode)
-            if u:
+            u = User.query.filter_by(refcode=refcode).first()
+            if u and u.id != current.id:
                 return make_response(jsonify(message="Success"), 200)
             else:
                 return make_response(jsonify(message="Invalid Ref Code"), 400)

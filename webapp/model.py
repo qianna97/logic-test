@@ -62,7 +62,8 @@ class User(db.Model):
                 'id': self.id,
                 'name': self.name,
                 'username': self.username,
-                'email': self.email
+                'email': self.email,
+				'refcode': self.refcode
                 }
 
     def __repr__(self):
