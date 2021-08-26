@@ -1,5 +1,4 @@
-from app import db
-from model import *
+from webapp import db
 
 db.drop_all()
 db.create_all()

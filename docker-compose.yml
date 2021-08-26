@@ -1,0 +1,56 @@
+version: "3.8"
+   
+services:
+    migrate:
+        build: .
+        container_name: migrate
+        command: python run.py migrate
+        volumes:
+            - .:/usr/src/app/
+        ports:
+            - "5000:5000"
+        environment:
+            - CACHE_TYPE=redis
+            - CACHE_REDIS_HOST=redis
+            - CACHE_REDIS_PORT=6379
+            - CACHE_REDIS_DB=0
+            - CACHE_REDIS_URL=redis://redis:6379/0
+            - CACHE_DEFAULT_TIMEOUT=500
+        depends_on:
+            - pgdb
+            - redis
+    web:
+        build: .
+        container_name: flask
+        command: python run.py runserver
+        volumes:
+            - .:/usr/src/app/
+        ports:
+            - "8000:8000"
+        environment:
+            - CACHE_TYPE=redis
+            - CACHE_REDIS_HOST=redis
+            - CACHE_REDIS_PORT=6379
+            - CACHE_REDIS_DB=0
+            - CACHE_REDIS_URL=redis://redis:6379/0
+            - CACHE_DEFAULT_TIMEOUT=500
+        depends_on:
+            - pgdb
+            - redis
+    pgdb:
+        image: postgres
+        container_name: pgdb
+        environment:
+            - POSTGRES_DB=database
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=mysecretpassword
+            - POSTGRES_DATABASE=database
+        volumes:
+            - pgdata:/var/lib/postgresql/data/
+        ports:
+            - "5432:5432"
+    redis:
+        image: "redis:alpine"
+        
+volumes:
+    pgdata:

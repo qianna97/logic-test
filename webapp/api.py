@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, make_response
 from flask_restx import Api, Resource
 from webapp.model import User
-from webapp import app
+from webapp import app, cache
 import hashlib
 from functools import wraps
 import jwt
@@ -141,6 +141,7 @@ class FindUser(Resource):
 @api.route('/get-hero')
 @api.doc(params={'name': 'Name of hero LoL'})
 class GetHero(Resource):
+    @cache.cached(timeout=30, query_string=True)
     def post(self):
         name = request.args.get('name')
         req = requests.get(
